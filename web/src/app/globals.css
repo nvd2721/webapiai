@@ -1,0 +1,112 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f7f7f8;
+  --fg: #0b0b0f;
+  --muted: #5f6370;
+  --border: #e6e6ea;
+  --card: #ffffff;
+  --accent: #4f46e5;
+  --accent-fg: #ffffff;
+  --accent-soft: #eef0ff;
+  --code-bg: #0f1117;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #09090b;
+    --bg-soft: #111114;
+    --fg: #f3f3f5;
+    --muted: #9a9ba5;
+    --border: #24242a;
+    --card: #111114;
+    --accent: #818cf8;
+    --accent-fg: #0b0b0f;
+    --accent-soft: #1b1d33;
+    --code-bg: #0c0d12;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-soft: var(--bg-soft);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-code: var(--code-bg);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+@utility container-x {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-accent text-accent-fg hover:opacity-90;
+}
+@utility btn-secondary {
+  @apply btn border border-border bg-card text-fg hover:bg-bg-soft;
+}
+@utility btn-ghost {
+  @apply btn text-muted hover:bg-bg-soft hover:text-fg;
+}
+@utility card {
+  @apply rounded-xl border border-border bg-card;
+}
+@utility input {
+  @apply w-full rounded-lg border border-border bg-bg px-3 py-2 text-sm outline-none placeholder:text-muted focus:border-accent focus:ring-2 focus:ring-accent/20;
+}
+@utility label {
+  @apply mb-1.5 block text-sm font-medium;
+}
+@utility badge {
+  @apply inline-flex items-center rounded-md border border-border px-1.5 py-0.5 text-xs font-medium text-muted;
+}
+@utility table-x {
+  @apply w-full text-left text-sm;
+  & th {
+    @apply border-b border-border px-3 py-2 text-xs font-medium tracking-wide text-muted uppercase;
+  }
+  & td {
+    @apply border-b border-border px-3 py-2.5 align-middle;
+  }
+  & tr:last-child td {
+    @apply border-b-0;
+  }
+}
+
+/* Markdown pages (docs, legal) */
+.prose-x {
+  @apply prose prose-zinc max-w-none dark:prose-invert prose-headings:scroll-mt-20 prose-headings:font-semibold prose-a:text-accent prose-code:before:content-none prose-code:after:content-none prose-code:rounded prose-code:bg-bg-soft prose-code:px-1 prose-code:py-0.5 prose-code:font-normal prose-table:text-sm;
+}
+.prose-x .code-block {
+  @apply relative my-5 overflow-hidden rounded-xl border border-white/10 bg-code;
+}
+.prose-x .code-block pre {
+  @apply m-0 overflow-x-auto bg-transparent p-4 text-[13px] leading-relaxed text-zinc-100;
+}
+.prose-x .code-block code {
+  @apply bg-transparent p-0 text-zinc-100;
+}
+.prose-x .code-lang {
+  @apply border-b border-white/10 px-4 py-1.5 font-mono text-xs text-zinc-400;
+}
