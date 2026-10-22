@@ -1,0 +1,51 @@
+# Bộ chạy thử trên máy cá nhân (Docker Desktop). KHÔNG dùng cho máy chủ thật.
+# Gồm: New API (SQLite), PostgreSQL cho dịch vụ nạp tiền, và dịch vụ nạp tiền.
+#   cd payment/local && cp env.example .env && docker compose up -d --build
+name: payment-local
+
+services:
+  new-api:
+    image: calciumion/new-api:v0.13.2
+    restart: unless-stopped
+    command: --log-dir /data/logs
+    environment:
+      TZ: Asia/Ho_Chi_Minh
+      SESSION_SECRET: local-test-session-secret
+    volumes:
+      - newapi_data:/data
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: payments
+      POSTGRES_PASSWORD: payments
+      POSTGRES_DB: payments
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payments"]
+      interval: 5s
+      retries: 20
+
+  payment:
+    build: ..
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PAYMENTS_DATABASE_URL: postgresql://payments:payments@postgres:5432/payments
+      NEWAPI_INTERNAL_URL: http://new-api:3000
+      PORT: "8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      new-api:
+        condition: service_started
+    ports:
+      - "127.0.0.1:8080:8080"
+
+volumes:
+  newapi_data:
+  pg_data:
