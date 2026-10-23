@@ -1,9 +1,10 @@
+import { PageHeader } from "@/components/page-header";
 import Link from "next/link";
 import { authed, requireSession } from "@/lib/auth";
 import { formatDateTime, formatNumber, formatUsd, quotaToUsd } from "@/lib/format";
 import { listLogs, listTokens, logStat } from "@/lib/newapi";
 
-export const metadata = { title: "Lịch sử sử dụng" };
+export const metadata = { title: "Nhật ký request" };
 
 const RANGES = { "1": "24 giờ", "7": "7 ngày", "30": "30 ngày", all: "Tất cả" } as const;
 const TYPES = { "2": "Sử dụng API", "1": "Nạp tiền", "5": "Lỗi", "0": "Tất cả" } as const;
@@ -38,17 +39,14 @@ export default async function UsagePage({ searchParams }: { searchParams: Promis
   const href = (patch: Partial<SP>) => {
     const p = new URLSearchParams({ range, type, model: query.model, key: query.token, p: String(page), ...patch } as Record<string, string>);
     for (const [k, v] of [...p.entries()]) if (!v) p.delete(k);
-    return `/dashboard/usage?${p}`;
+    return `/console/logs?${p}`;
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Lịch sử sử dụng</h1>
-        <p className="mt-1 text-sm text-muted">Từng request kèm số token và chi phí. Nội dung prompt không được lưu.</p>
-      </div>
+      <PageHeader title="Nhật ký request" desc="Từng request kèm số token và chi phí. Nội dung prompt không được lưu." refresh="/console/logs" />
 
-      <form className="card flex flex-wrap items-end gap-3 p-4" action="/dashboard/usage">
+      <form className="card flex flex-wrap items-end gap-3 p-4" action="/console/logs">
         <div>
           <label className="label text-xs" htmlFor="range">
             Thời gian

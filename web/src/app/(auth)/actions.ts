@@ -17,7 +17,7 @@ const password = z.string().min(8, "Mật khẩu cần ít nhất 8 ký tự.").
 
 function safeNext(next: FormDataEntryValue | null) {
   const n = typeof next === "string" ? next : "";
-  return n.startsWith("/") && !n.startsWith("//") ? n : "/dashboard";
+  return n.startsWith("/") && !n.startsWith("//") ? n : "/console";
 }
 
 async function signIn(u: string, p: string) {
@@ -68,7 +68,7 @@ export async function registerAction(_: AuthState, form: FormData): Promise<Auth
   } catch (e) {
     return { error: e instanceof NewApiError ? e.message : "Có lỗi xảy ra, vui lòng thử lại.", fields };
   }
-  redirect("/dashboard?welcome=1");
+  redirect("/console?welcome=1");
 }
 
 export async function logoutAction() {

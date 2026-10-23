@@ -15,6 +15,10 @@ type MockUser = {
   request_count: number;
   group: string;
   aff_code: string;
+  display_name?: string;
+  aff_quota?: number;
+  aff_history_quota?: number;
+  aff_count?: number;
 };
 
 type Store = { users: MockUser[]; tokens: ApiToken[]; fullKeys: Record<number, string>; logs: LogEntry[]; seq: number };
@@ -49,6 +53,7 @@ const CATALOG: [string, number, number, number, number?][] = [
   ["qwen3-max", 5, 0.6, 5],
   ["qwen-plus", 5, 0.2, 3],
   ["glm-4.6", 6, 0.3, 3.667],
+  ["glm-4.5-flash", 6, 0, 1],
   ["kimi-k2", 7, 0.3, 4.167],
   ["grok-4", 8, 1.5, 5],
 ];
@@ -102,6 +107,9 @@ function seed(): Store {
     request_count: 0,
     group: "default",
     aff_code: "DEMO",
+    aff_count: 3,
+    aff_quota: 6 * QUOTA_PER_UNIT,
+    aff_history_quota: 8 * QUOTA_PER_UNIT,
   });
   for (const [id, name] of [
     [1, "Claude Code"],
@@ -187,7 +195,7 @@ function publicUser(u: MockUser) {
   return {
     id: u.id,
     username: u.username,
-    display_name: u.username,
+    display_name: u.display_name || u.username,
     email: u.email,
     role: 1,
     status: 1,
@@ -196,8 +204,9 @@ function publicUser(u: MockUser) {
     used_quota: u.used_quota,
     request_count: u.request_count,
     aff_code: u.aff_code,
-    aff_count: 0,
-    aff_quota: 0,
+    aff_count: u.aff_count || 0,
+    aff_quota: u.aff_quota || 0,
+    aff_history_quota: u.aff_history_quota || 0,
   };
 }
 
@@ -239,7 +248,23 @@ export function mockHandle(method: string, path: string, body: unknown, sessionC
   if (uidHeader !== uid) return fail("Unauthorized, New-Api-User does not match logged in user", 401);
 
   if (p === "/api/user/logout") return ok();
+  if (p === "/api/user/self" && method === "PUT") {
+    if (b.original_password !== user.password) return fail("原密码错误");
+    if (b.display_name) user.display_name = String(b.display_name);
+    if (b.password) user.password = String(b.password);
+    return ok();
+  }
   if (p === "/api/user/self") return ok(publicUser(user));
+  if (p === "/api/user/models") return ok(mockPricing().data.map((x) => x.model_name));
+  if (p === "/api/user/aff") return ok(user.aff_code);
+  if (p === "/api/user/aff_transfer") {
+    const qv = Number(b.quota);
+    if (qv < QUOTA_PER_UNIT) return fail("转移额度最小为＄1.000000 额度！");
+    if (qv > (user.aff_quota || 0)) return fail("insufficient affiliate quota");
+    user.aff_quota = (user.aff_quota || 0) - qv;
+    user.quota += qv;
+    return ok();
+  }
 
   if (p === "/api/token" && method === "GET") {
     const items = s.tokens.filter((t) => t.user_id === uid).sort((a, b) => b.id - a.id);

@@ -1,6 +1,7 @@
+import { AnnouncementBar } from "@/components/announcement-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { isDemo } from "@/lib/site";
+import { isDemo, site } from "@/lib/site";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -10,6 +11,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           Chế độ demo: dữ liệu giả lập, chưa nối New API. Đăng nhập thử bằng demo / demo1234.
         </div>
       )}
+      <AnnouncementBar text={site.announcement} href={site.announcementHref} />
       <SiteHeader />
       <main>{children}</main>
       <SiteFooter />

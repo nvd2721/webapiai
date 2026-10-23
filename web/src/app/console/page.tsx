@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/page-header";
 import Link from "next/link";
 import { ArrowRight, PartyPopper } from "lucide-react";
 import { CopyButton } from "@/components/copy-button";
@@ -53,7 +54,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
   const total14 = series.reduce((a, d) => a + d.usd, 0);
 
   const stats = [
-    { label: "Số dư", value: formatUsd(quotaToUsd(user.quota)), href: "/dashboard/topup", cta: "Nạp tiền" },
+    { label: "Số dư", value: formatUsd(quotaToUsd(user.quota)), href: "/console/topup", cta: "Nạp tiền" },
     { label: "Chi tiêu 7 ngày", value: week ? formatUsd(quotaToUsd(week.quota)) : "—" },
     { label: "Tổng đã dùng", value: formatUsd(quotaToUsd(user.used_quota)) },
     { label: "Tổng số request", value: formatNumber(user.request_count) },
@@ -67,17 +68,23 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           <div>
             <div className="font-medium">Tài khoản đã sẵn sàng!</div>
             <div className="mt-1 text-muted">
-              Bước tiếp theo: <Link href="/dashboard/topup" className="text-accent">nạp tiền</Link> rồi{" "}
-              <Link href="/dashboard/keys" className="text-accent">tạo API key</Link>.
+              Bước tiếp theo: <Link href="/console/topup" className="font-medium underline">nạp tiền</Link> rồi{" "}
+              <Link href="/console/keys" className="font-medium underline">tạo API key</Link>.
             </div>
           </div>
         </div>
       )}
 
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Xin chào, {user.display_name || user.username}</h1>
-        <p className="mt-1 text-sm text-muted">Tổng quan tài khoản và chi tiêu của bạn.</p>
-      </div>
+      <PageHeader
+        title={`Xin chào, ${user.display_name || user.username}`}
+        desc="Tổng quan tài khoản và chi tiêu của bạn."
+        refresh="/console"
+        action={
+          <Link href="/console/chat" className="btn-secondary">
+            Mở Chat
+          </Link>
+        }
+      />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {stats.map((s) => (
@@ -102,7 +109,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           <div className="mt-4">
             <UsageChart data={series} />
           </div>
-          <p className="mt-2 text-xs text-muted">Biểu đồ cập nhật sau vài phút. Chi tiết từng request ở Lịch sử sử dụng.</p>
+          <p className="mt-2 text-xs text-muted">Biểu đồ cập nhật sau vài phút. Chi tiết từng request ở Nhật ký request.</p>
         </div>
         <div className="card p-5">
           <h2 className="font-semibold">Mô hình dùng nhiều</h2>
@@ -148,7 +155,7 @@ export default async function Overview({ searchParams }: { searchParams: Promise
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Link href="/dashboard/keys" className="btn-primary">
+          <Link href="/console/keys" className="btn-primary">
             Tạo API key
           </Link>
           <Link href="/docs" className="btn-secondary">

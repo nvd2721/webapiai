@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // Markdown pages are read from disk at request time.
   outputFileTracingIncludes: { "/**": ["./content/**/*"] },
+  async redirects() {
+    return [
+      { source: "/dashboard/usage", destination: "/console/logs", permanent: true },
+      { source: "/dashboard/:path*", destination: "/console/:path*", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

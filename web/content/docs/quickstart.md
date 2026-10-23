@@ -12,18 +12,18 @@ group: Bắt đầu
 ## 1. Tạo tài khoản và nạp tiền
 
 1. [Đăng ký]({{SITE_URL}}/register) bằng tên đăng nhập và mật khẩu.
-2. Vào **Bảng điều khiển → Nạp tiền**, chọn số tiền và đồng coin (USDT TRC20, USDT BEP20 hoặc Bitcoin). 1 credit = 1 USD.
+2. Vào **Console → Nạp tiền**, chọn số tiền và đồng coin (USDT TRC20, USDT BEP20 hoặc Bitcoin). 1 credit = 1 USD.
 3. Sau khi giao dịch được xác nhận trên blockchain, số dư được cộng tự động. Xem chi tiết ở [Nạp tiền](/docs/topup).
 
 ## 2. Tạo API key
 
-Vào **Bảng điều khiển → API key → Tạo key**. Key có dạng `sk-...`. Bạn có thể đặt:
+Vào **Console → API key → Tạo key**. Key có dạng `sk-...`. Bạn có thể đặt:
 
 - **Hạn mức chi tiêu**: key tự ngừng khi tiêu hết số USD này.
 - **Ngày hết hạn**.
 - **Danh sách mô hình được dùng** và **IP được phép**.
 
-Giữ key bí mật như mật khẩu. Nếu lộ key, hãy tắt hoặc xóa nó ngay trong bảng điều khiển.
+Giữ key bí mật như mật khẩu. Nếu lộ key, hãy tắt hoặc xóa nó ngay trong Console.
 
 ## 3. Gửi request đầu tiên
 

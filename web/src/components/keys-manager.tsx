@@ -2,7 +2,7 @@
 
 import { Eye, EyeOff, Plus, Power, Trash2, X } from "lucide-react";
 import { useActionState, useEffect, useMemo, useState, useTransition } from "react";
-import { createKeyAction, deleteKeyAction, revealKeyAction, toggleKeyAction, type KeyResult } from "@/app/dashboard/keys/actions";
+import { createKeyAction, deleteKeyAction, revealKeyAction, toggleKeyAction, type KeyResult } from "@/app/console/keys/actions";
 import type { ApiToken } from "@/lib/newapi-types";
 import { formatDate, formatDateTime, formatUsd, quotaToUsd } from "@/lib/format";
 import { CopyButton } from "./copy-button";

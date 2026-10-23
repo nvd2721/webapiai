@@ -15,6 +15,12 @@ export const site = {
   telegram: process.env.SUPPORT_TELEGRAM || "",
   zalo: process.env.SUPPORT_ZALO || "",
   companyName: process.env.COMPANY_NAME || "",
+  // Promo strip above the header. Set ANNOUNCEMENT="" to hide it.
+  announcement: process.env.ANNOUNCEMENT ?? "Nạp bằng USDT hoặc Bitcoin, không cần thẻ quốc tế. Mời bạn bè để nhận thêm credit",
+  announcementHref: process.env.ANNOUNCEMENT_LINK || "/pricing?tab=promotions",
+  // Referral rewards as configured in New API (QuotaForInviter / QuotaForInvitee), in USD.
+  referralInviterUsd: Number(process.env.REFERRAL_INVITER_USD || 0),
+  referralInviteeUsd: Number(process.env.REFERRAL_INVITEE_USD || 0),
 };
 
 export const isDemo = !process.env.NEWAPI_URL;

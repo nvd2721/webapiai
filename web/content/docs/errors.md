@@ -25,7 +25,7 @@ Khi liên hệ hỗ trợ, hãy gửi kèm **request id** trong thông báo lỗ
 | --- | --- | --- |
 | 400 | Request sai định dạng hoặc tham số không hợp lệ | Kiểm tra JSON, tên tham số, `max_tokens` vượt giới hạn mô hình. |
 | 401 | API key sai, đã bị xóa hoặc chưa gửi | Kiểm tra header `Authorization: Bearer sk-...`. |
-| 403 | Hết số dư, hết hạn mức của key, key hết hạn, mô hình hoặc IP không được phép | Nạp thêm tiền hoặc chỉnh cài đặt key trong bảng điều khiển. |
+| 403 | Hết số dư, hết hạn mức của key, key hết hạn, mô hình hoặc IP không được phép | Nạp thêm tiền hoặc chỉnh cài đặt key trong Console. |
 | 404 | Sai đường dẫn | Base URL chuẩn OpenAI phải kết thúc bằng `/v1`. |
 | 429 | Gửi quá nhiều request trong thời gian ngắn | Chờ rồi thử lại, dùng exponential backoff. |
 | 500 | Lỗi nội bộ | Thử lại; nếu lặp lại, gửi request id cho hỗ trợ. |

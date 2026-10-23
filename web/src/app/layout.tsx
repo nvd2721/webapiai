@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { THEME_SCRIPT } from "@/components/theme-toggle";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -16,7 +17,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="vi">
+    <html lang="vi" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className={`${inter.variable} ${mono.variable} min-h-dvh font-sans antialiased`}>{children}</body>
     </html>
   );

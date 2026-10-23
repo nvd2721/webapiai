@@ -1,197 +1,259 @@
 import Link from "next/link";
-import { ArrowRight, Bitcoin, Code2, Gauge, KeyRound, Layers, MessagesSquare, ShieldCheck } from "lucide-react";
+import { ArrowRight, Bitcoin, Check, Code2, KeyRound, Layers, ScrollText } from "lucide-react";
 import { CodeTabs } from "@/components/code-tabs";
+import { HeroPrompt } from "@/components/hero-prompt";
 import { getModels } from "@/lib/models";
 import { codeSamples } from "@/lib/snippets";
-import { formatCompact, formatPrice } from "@/lib/format";
+import { formatPrice } from "@/lib/format";
 import { site } from "@/lib/site";
 
-const FEATURED = ["claude-sonnet-4-5", "gpt-5", "gemini-2.5-pro", "deepseek-chat", "claude-haiku-4-5", "qwen3-max"];
+const HERO_MODELS = ["claude-sonnet-4-5", "gpt-5", "gemini-2.5-pro", "deepseek-chat", "glm-4.6"];
 
-const WHY = [
-  {
-    icon: Bitcoin,
-    title: "Nạp bằng USDT hoặc Bitcoin",
-    body: "Không cần thẻ Visa hay Mastercard. Chuyển USDT qua TRC20, BEP20 hoặc BTC, số dư được cộng tự động sau khi giao dịch xác nhận.",
-  },
-  {
-    icon: Layers,
-    title: "Một key, mọi mô hình",
-    body: "GPT, Claude, Gemini, DeepSeek, Qwen, GLM, Kimi… chỉ cần đổi tên mô hình, không phải mở tài khoản ở từng hãng.",
-  },
-  {
-    icon: Code2,
-    title: "Tương thích OpenAI và Anthropic",
-    body: "Dùng ngay SDK OpenAI, Anthropic, LangChain, Claude Code, Cursor, n8n, Dify. Chỉ đổi base URL và API key.",
-  },
-  {
-    icon: Gauge,
-    title: "Trả theo token, giá công khai",
-    body: "Không phí tháng, không hợp đồng. Mỗi request đều ghi rõ số token và chi phí trong bảng điều khiển.",
-  },
-  {
-    icon: KeyRound,
-    title: "Kiểm soát từng key",
-    body: "Đặt hạn mức chi tiêu, ngày hết hạn, danh sách mô hình và IP được phép cho từng key. Khóa key chỉ với một cú bấm.",
-  },
-  {
-    icon: MessagesSquare,
-    title: "Hỗ trợ tiếng Việt",
-    body: "Đội ngũ cùng múi giờ, hỗ trợ qua Telegram và Zalo, tài liệu hướng dẫn bằng tiếng Việt.",
-  },
+const VALUES = [
+  { word: "Đơn giản", body: "Một key, một base URL, đổi mô hình bằng một dòng." },
+  { word: "Minh bạch", body: "Giá công khai, từng request đều có số token và chi phí." },
+  { word: "Ổn định", body: "Nhiều kênh cho mỗi mô hình, tự chuyển khi một kênh lỗi." },
+  { word: "Tận tâm", body: "Hỗ trợ tiếng Việt qua Telegram và Zalo, cùng múi giờ." },
 ];
 
 const FAQ = [
-  {
-    q: "Tôi có cần thẻ quốc tế không?",
-    a: "Không. Bạn nạp bằng USDT (mạng TRC20 hoặc BEP20) hoặc Bitcoin từ ví cá nhân hoặc từ sàn. 1 credit tương đương 1 USD.",
-  },
-  {
-    q: "Giá được tính thế nào?",
-    a: "Theo số token vào và ra của từng request, theo bảng giá mỗi 1 triệu token ở trang Bảng giá. Số dư chỉ bị trừ khi request thành công.",
-  },
-  {
-    q: "Tôi có dùng được với Claude Code hoặc Cursor không?",
-    a: "Có. Xem hướng dẫn từng bước trong phần Tài liệu. Với Claude Code bạn chỉ cần đặt ANTHROPIC_BASE_URL và ANTHROPIC_AUTH_TOKEN.",
-  },
-  {
-    q: "Số dư có hết hạn không?",
-    a: "Không. Số dư được giữ trong tài khoản cho tới khi bạn dùng hết. Chính sách hoàn tiền xem ở trang Chính sách hoàn tiền.",
-  },
-  {
-    q: "Dữ liệu của tôi có bị lưu không?",
-    a: "Chúng tôi chỉ lưu thông tin tính tiền (mô hình, số token, thời gian). Nội dung prompt và câu trả lời không được lưu lại.",
-  },
+  { q: "Tôi có cần thẻ quốc tế không?", a: "Không. Bạn nạp bằng USDT (TRC20 hoặc BEP20) hoặc Bitcoin, từ ví cá nhân hoặc từ sàn. 1 credit = 1 USD." },
+  { q: "Giá được tính thế nào?", a: "Theo số token vào và ra của từng request, theo bảng giá mỗi 1 triệu token. Request lỗi không bị trừ tiền." },
+  { q: "Dùng với Claude Code, Cursor được không?", a: "Được. Với Claude Code chỉ cần đặt ANTHROPIC_BASE_URL và ANTHROPIC_AUTH_TOKEN. Xem hướng dẫn trong Tài liệu." },
+  { q: "Số dư có hết hạn không?", a: "Không. Số dư giữ nguyên cho tới khi bạn dùng hết." },
+  { q: "Nội dung prompt có bị lưu không?", a: "Không. Chúng tôi chỉ lưu thông tin tính tiền: mô hình, số token, thời gian." },
 ];
+
+function Digits({ value }: { value: string }) {
+  return (
+    <span className="inline-flex gap-1">
+      {value.split("").map((c, i) => (
+        <span key={i} className="grid h-12 min-w-9 place-items-center rounded-lg border border-border bg-card px-1.5 font-mono text-2xl font-semibold shadow-sm sm:h-14 sm:min-w-10 sm:text-3xl">
+          {c}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function Feature({ title, body, points, visual, flip }: { title: string; body: string; points: string[]; visual: React.ReactNode; flip?: boolean }) {
+  return (
+    <div className="grid items-center gap-10 py-14 md:grid-cols-2 md:gap-16">
+      <div className={flip ? "md:order-2" : ""}>
+        <h3 className="text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h3>
+        <p className="mt-3 text-muted">{body}</p>
+        <ul className="mt-5 space-y-2 text-sm">
+          {points.map((p) => (
+            <li key={p} className="flex gap-2">
+              <Check className="mt-0.5 size-4 shrink-0" /> {p}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="rounded-2xl border border-border bg-bg-soft p-6 sm:p-8">{visual}</div>
+    </div>
+  );
+}
 
 export default async function HomePage() {
   const models = await getModels();
   const vendors = [...new Set(models.map((m) => m.vendor))];
-  const featured = FEATURED.map((id) => models.find((m) => m.id === id)).filter(Boolean) as typeof models;
-  const shown = featured.length >= 4 ? featured : models.filter((m) => m.kind === "chat").slice(0, 6);
+  const chat = models.filter((m) => m.kind === "chat");
+  const heroModels = [...HERO_MODELS.map((id) => chat.find((m) => m.id === id)).filter((m) => !!m), ...chat.filter((m) => !HERO_MODELS.includes(m.id))]
+    .slice(0, 12)
+    .map((m) => ({ id: m.id, name: m.name }));
+  const sample = chat.slice(0, 5);
+  const freeCount = models.filter((m) => m.free).length;
 
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_50%_0%,var(--accent-soft),transparent)]" />
-        <div className="container-x grid items-center gap-12 py-16 md:py-24 lg:grid-cols-[1.05fr_1fr]">
-          <div>
-            <span className="badge mb-5 gap-1.5 bg-card">
-              <ShieldCheck className="size-3.5 text-accent" /> Nạp USDT, Bitcoin · Không cần thẻ
-            </span>
-            <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-              Một API key cho <span className="text-accent">mọi mô hình AI</span>
-            </h1>
-            <p className="mt-5 max-w-xl text-lg text-muted">
-              Gọi {models.length > 0 ? `${models.length} mô hình` : "hàng chục mô hình"} từ {vendors.length || "nhiều"} hãng qua một
-              endpoint tương thích OpenAI và Anthropic. Trả theo token, không phí tháng.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/register" className="btn-primary px-5 py-2.5">
-                Tạo API key <ArrowRight className="size-4" />
-              </Link>
-              <Link href="/models" className="btn-secondary px-5 py-2.5">
-                Xem mô hình và giá
-              </Link>
-            </div>
-            <div className="mt-8 flex items-center gap-2 font-mono text-sm text-muted">
-              <span className="rounded-md border border-border bg-card px-2 py-1">{site.apiBase}/v1</span>
-            </div>
+      <section className="relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(50%_60%_at_50%_0%,var(--accent-soft),transparent)]" />
+        <div className="container-x pt-20 pb-16 text-center sm:pt-28">
+          <h1 className="mx-auto max-w-4xl text-4xl leading-[1.08] font-semibold tracking-tight text-balance sm:text-6xl">
+            Một API key.
+            <br />
+            Mọi mô hình AI.
+            <br />
+            <span className="text-muted">Nạp bằng USDT, Bitcoin.</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-xl text-lg text-muted">
+            Gọi GPT, Claude, Gemini, DeepSeek và hơn thế nữa qua một endpoint tương thích OpenAI và Anthropic. Trả theo token, không phí tháng.
+          </p>
+          {heroModels.length > 0 && <HeroPrompt models={heroModels} />}
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link href="/register" className="btn-primary px-5 py-2.5">
+              Tạo API key <ArrowRight className="size-4" />
+            </Link>
+            <Link href="/models" className="btn-secondary px-5 py-2.5">
+              Xem mô hình
+            </Link>
+            <Link href="/docs" className="btn-secondary px-5 py-2.5">
+              Đọc tài liệu
+            </Link>
           </div>
-          <CodeTabs samples={codeSamples()} />
         </div>
       </section>
 
-      {/* Vendors */}
+      {/* Counters */}
+      <section className="container-x">
+        <div className="grid gap-6 rounded-2xl border border-border p-6 sm:grid-cols-2 sm:p-8 lg:grid-cols-4">
+          {[
+            { v: String(models.length), l: "mô hình sẵn sàng" },
+            { v: String(vendors.length), l: "hãng AI" },
+            { v: String(freeCount), l: "mô hình miễn phí" },
+            { v: "0", l: "USD phí hằng tháng" },
+          ].map((s) => (
+            <div key={s.l} className="text-center">
+              <Digits value={s.v} />
+              <div className="mt-2 text-sm text-muted">{s.l}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Vendor strip */}
       {vendors.length > 0 && (
-        <section className="border-b border-border py-8">
-          <div className="container-x flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-sm font-medium text-muted">
-            {vendors.map((v) => (
-              <span key={v}>{v}</span>
+        <section className="mt-14 overflow-hidden border-y border-border py-6 [mask-image:linear-gradient(90deg,transparent,#000_10%,#000_90%,transparent)]">
+          <div className="flex w-max animate-[marquee_40s_linear_infinite] gap-14 text-lg font-semibold text-muted">
+            {[...vendors, ...vendors, ...vendors, ...vendors].map((v, i) => (
+              <span key={i}>{v}</span>
             ))}
           </div>
         </section>
       )}
 
       {/* Why */}
-      <section className="container-x py-20">
-        <div className="max-w-2xl">
-          <h2 className="text-3xl font-semibold tracking-tight">Vì sao chọn {site.name}</h2>
-          <p className="mt-3 text-muted">Làm cho lập trình viên Việt Nam và châu Á: thanh toán dễ, tích hợp nhanh, hỗ trợ tận tình.</p>
-        </div>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {WHY.map((w) => (
-            <div key={w.title} className="card p-6">
-              <w.icon className="size-5 text-accent" />
-              <h3 className="mt-4 font-semibold">{w.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">{w.body}</p>
-            </div>
-          ))}
+      <section className="container-x pt-20">
+        <h2 className="text-center text-3xl font-semibold tracking-tight sm:text-4xl">Vì sao chọn {site.name}?</h2>
+        <div className="divide-y divide-border">
+          <Feature
+            title="Một key cho mọi mô hình"
+            body="Không phải mở tài khoản và nạp tiền ở từng hãng. Đổi mô hình chỉ bằng cách đổi tên trong trường model."
+            points={["Chuẩn OpenAI và Anthropic", "Nhiều kênh cho mỗi mô hình, tự chuyển khi lỗi", "Thêm mô hình mới liên tục"]}
+            visual={
+              <div className="space-y-2">
+                {sample.map((m) => (
+                  <div key={m.id} className="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2 text-sm">
+                    <span className="font-mono text-xs">&quot;model&quot;: &quot;{m.id}&quot;</span>
+                    <span className="text-xs text-muted">{formatPrice(m.input)} / 1M</span>
+                  </div>
+                ))}
+              </div>
+            }
+          />
+          <Feature
+            flip
+            title="Nạp bằng USDT hoặc Bitcoin"
+            body="Không cần thẻ Visa hay Mastercard. Quét mã QR, số dư được cộng tự động sau khi giao dịch được xác nhận trên blockchain."
+            points={["USDT TRC20, BEP20 và Bitcoin", "Nạp từ 5 USD", "1 credit = 1 USD, số dư không hết hạn"]}
+            visual={
+              <div className="mx-auto max-w-xs rounded-xl border border-border bg-card p-5 text-sm shadow-sm">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">Hóa đơn nạp</span>
+                  <Bitcoin className="size-5 text-muted" />
+                </div>
+                <div className="mt-4 space-y-2 text-muted">
+                  <div className="flex justify-between">
+                    <span>Số tiền</span>
+                    <span className="text-fg">20 USD</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Đồng coin</span>
+                    <span className="text-fg">USDT · TRC20</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Nhận</span>
+                    <span className="text-fg">20 credit</span>
+                  </div>
+                </div>
+                <div className="mt-4 grid aspect-square place-items-center rounded-lg bg-[repeating-conic-gradient(var(--fg)_0_25%,transparent_0_50%)] bg-[length:16px_16px] opacity-80" />
+              </div>
+            }
+          />
+          <Feature
+            title="Chạy được với công cụ bạn đang dùng"
+            body="Claude Code, Cursor, Cline, n8n, Dify, LangChain và mọi SDK tương thích OpenAI."
+            points={["Hướng dẫn tiếng Việt từng bước", "Không cần sửa code, chỉ đổi base URL", "Streaming, tool calling, embedding"]}
+            visual={
+              <pre className="overflow-x-auto rounded-xl bg-code p-5 font-mono text-[13px] leading-relaxed text-zinc-100">
+                {`export ANTHROPIC_BASE_URL="${site.apiBase}"
+export ANTHROPIC_AUTH_TOKEN="sk-..."
+claude`}
+              </pre>
+            }
+          />
+          <Feature
+            flip
+            title="Kiểm soát chi phí từng key"
+            body="Mỗi ứng dụng một key, mỗi key một hạn mức. Không lo một lỗi vòng lặp đốt hết số dư."
+            points={["Hạn mức chi tiêu và ngày hết hạn", "Giới hạn mô hình và IP được dùng", "Tắt key ngay lập tức khi bị lộ"]}
+            visual={
+              <div className="space-y-2 text-sm">
+                {[
+                  ["Claude Code", "12,40 / 50 USD", 25],
+                  ["Chatbot web", "3,10 / 10 USD", 31],
+                  ["Thử nghiệm", "0,85 / 2 USD", 42],
+                ].map(([n, v, p]) => (
+                  <div key={n as string} className="rounded-lg border border-border bg-card p-3">
+                    <div className="flex justify-between">
+                      <span className="font-medium">
+                        <KeyRound className="mr-1.5 inline size-3.5" />
+                        {n}
+                      </span>
+                      <span className="text-xs text-muted">{v}</span>
+                    </div>
+                    <div className="mt-2 h-1.5 rounded-full bg-bg-soft">
+                      <div className="h-1.5 rounded-full bg-fg" style={{ width: `${p}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            }
+          />
+          <Feature
+            title="Minh bạch từng request"
+            body="Nhật ký ghi rõ mô hình, số token vào/ra và chi phí của từng lần gọi. Request lỗi không bị trừ tiền."
+            points={["Lọc theo key, mô hình, thời gian", "Biểu đồ chi tiêu theo ngày", "Không lưu nội dung prompt"]}
+            visual={
+              <div className="overflow-hidden rounded-xl border border-border bg-card text-xs">
+                {[
+                  ["claude-sonnet-4-5", "12.408 / 1.203", "$0,0553"],
+                  ["deepseek-chat", "3.120 / 845", "$0,0013"],
+                  ["gpt-5-mini", "8.002 / 2.110", "$0,0062"],
+                  ["gemini-2.5-flash", "1.530 / 402", "$0,0015"],
+                ].map(([m, t, c]) => (
+                  <div key={m} className="flex items-center justify-between border-b border-border px-3 py-2.5 last:border-0">
+                    <span className="flex items-center gap-1.5 font-mono">
+                      <ScrollText className="size-3.5 text-muted" />
+                      {m}
+                    </span>
+                    <span className="text-muted">{t}</span>
+                    <span className="font-medium">{c}</span>
+                  </div>
+                ))}
+              </div>
+            }
+          />
         </div>
       </section>
 
-      {/* Featured models */}
-      {shown.length > 0 && (
-        <section className="border-y border-border bg-bg-soft py-20">
-          <div className="container-x">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <h2 className="text-3xl font-semibold tracking-tight">Mô hình nổi bật</h2>
-                <p className="mt-3 text-muted">Giá tính bằng USD cho mỗi 1 triệu token.</p>
-              </div>
-              <Link href="/models" className="btn-secondary">
-                Tất cả {models.length} mô hình <ArrowRight className="size-4" />
-              </Link>
+      {/* Values */}
+      <section className="border-y border-border bg-bg-soft py-20">
+        <div className="container-x grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          {VALUES.map((v, i) => (
+            <div key={v.word}>
+              <div className="text-xs text-muted">0{i + 1}</div>
+              <div className="mt-2 text-3xl font-semibold tracking-tight">{v.word}</div>
+              <p className="mt-2 text-sm text-muted">{v.body}</p>
             </div>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {shown.map((m) => (
-                <Link key={m.id} href={`/models/${m.id}`} className="card group p-5 transition-colors hover:border-accent">
-                  <div className="text-xs text-muted">{m.vendor}</div>
-                  <div className="mt-1 font-mono text-sm font-semibold group-hover:text-accent">{m.id}</div>
-                  <div className="mt-4 flex gap-6 text-sm">
-                    <div>
-                      <div className="text-xs text-muted">Vào</div>
-                      <div className="font-medium">{formatPrice(m.input)}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-muted">Ra</div>
-                      <div className="font-medium">{formatPrice(m.output)}</div>
-                    </div>
-                    {m.context && (
-                      <div>
-                        <div className="text-xs text-muted">Context</div>
-                        <div className="font-medium">{formatCompact(m.context)}</div>
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Steps */}
-      <section className="container-x py-20">
-        <h2 className="text-3xl font-semibold tracking-tight">Bắt đầu trong 3 phút</h2>
-        <ol className="mt-10 grid gap-4 md:grid-cols-3">
-          {[
-            { t: "Tạo tài khoản", d: "Đăng ký bằng tên đăng nhập và mật khẩu, không cần xác minh danh tính." },
-            { t: "Nạp USDT hoặc BTC", d: "Chọn số tiền, quét mã QR trên trang thanh toán. Số dư tự cộng khi giao dịch xác nhận." },
-            { t: "Tạo key và gọi API", d: "Tạo API key trong bảng điều khiển, đổi base URL trong code là xong." },
-          ].map((s, i) => (
-            <li key={s.t} className="card p-6">
-              <span className="grid size-8 place-items-center rounded-full bg-accent-soft text-sm font-semibold text-accent">{i + 1}</span>
-              <h3 className="mt-4 font-semibold">{s.t}</h3>
-              <p className="mt-2 text-sm text-muted">{s.d}</p>
-            </li>
           ))}
-        </ol>
+        </div>
       </section>
 
       {/* FAQ */}
-      <section className="container-x pb-8">
+      <section className="container-x pt-20">
         <h2 className="text-3xl font-semibold tracking-tight">Câu hỏi thường gặp</h2>
         <div className="mt-8 divide-y divide-border rounded-xl border border-border">
           {FAQ.map((f) => (
@@ -206,16 +268,24 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="container-x pt-16">
-        <div className="card flex flex-col items-start justify-between gap-6 bg-accent-soft p-8 md:flex-row md:items-center">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight">Sẵn sàng thử?</h2>
-            <p className="mt-2 text-muted">Tạo tài khoản miễn phí, nạp từ 5 USDT.</p>
+      {/* Final CTA */}
+      <section className="container-x pt-20">
+        <h2 className="text-center text-3xl font-semibold tracking-tight sm:text-4xl">Bắt đầu ngay hôm nay</h2>
+        <div className="mt-10 grid gap-4 lg:grid-cols-[1fr_1.4fr]">
+          <div className="card flex flex-col p-7">
+            <Layers className="size-6" />
+            <h3 className="mt-4 text-xl font-semibold">Dùng qua Chat</h3>
+            <p className="mt-2 text-sm text-muted">Trò chuyện với mọi mô hình ngay trên web, trừ cùng số dư với API. Không cần cài gì.</p>
+            <Link href="/console/chat" className="btn-primary mt-auto w-fit">
+              Mở Chat <ArrowRight className="size-4" />
+            </Link>
           </div>
-          <Link href="/register" className="btn-primary px-5 py-2.5">
-            Đăng ký ngay <ArrowRight className="size-4" />
-          </Link>
+          <div className="card p-7">
+            <Code2 className="size-6" />
+            <h3 className="mt-4 text-xl font-semibold">Dùng qua API</h3>
+            <p className="mt-2 mb-4 text-sm text-muted">Đổi base URL trong code hiện có là xong.</p>
+            <CodeTabs samples={codeSamples()} />
+          </div>
         </div>
       </section>
     </>

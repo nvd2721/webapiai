@@ -2,9 +2,12 @@
 
 Website công khai và bảng điều khiển khách hàng, chạy phía trước **New API v0.13.x** (gateway, tính tiền) và **dịch vụ nạp coin** (USDT/BTC qua NOWPayments).
 
-- Trang công khai: trang chủ, danh sách mô hình (lấy giá trực tiếp từ New API), chi tiết mô hình, bảng giá, 7 trang tài liệu, điều khoản, bảo mật, hoàn tiền.
-- Tài khoản: đăng ký, đăng nhập, đăng xuất.
-- Bảng điều khiển: tổng quan (số dư, biểu đồ chi tiêu 14 ngày, mô hình dùng nhiều), API key (tạo với hạn mức, hết hạn, giới hạn mô hình và IP; xem, tắt/bật, xóa), lịch sử sử dụng (lọc theo thời gian, key, mô hình), nạp tiền USDT TRC20 / USDT BEP20 / BTC.
+Bố cục và phong cách (đen trắng, sáng/tối) theo cấu trúc ZenMux, thương hiệu Aura.
+
+- Khung chung: thanh thông báo (`ANNOUNCEMENT`), header có menu thả xuống, tìm kiếm Ctrl/Cmd K, đổi sáng/tối, menu tài khoản; footer 3 cột.
+- Trang công khai: trang chủ, `/models` (tìm kiếm, 6 kiểu sắp xếp, Tất cả/Giảm giá/Miễn phí, tab loại, bộ lọc đầu vào/context/hãng/giao thức/suy luận, chọn để so sánh), chi tiết mô hình, `/compare` (tối đa 4 mô hình, bộ chọn sẵn), `/pricing` dạng tab (Tổng quan, Trả theo dùng, Ưu đãi), giới thiệu, hỗ trợ, nhật ký thay đổi, tài liệu, điều khoản.
+- Nhãn **Miễn phí** chỉ hiện khi giá thật trong New API bằng 0. Nhãn giảm giá chỉ hiện khi `listInput` trong `model-meta.ts` được điền.
+- Console (`/console`, đường cũ `/dashboard` tự chuyển hướng): Chat (gọi mô hình ngay trên web, trừ vào số dư qua `/pg/chat/completions` của New API), Tổng quan, Nhật ký request, Sử dụng và chi phí, API key, Nạp tiền (2 cột, USDT TRC20 / USDT BEP20 / BTC), Lịch sử nạp, Mời bạn (link giới thiệu, chuyển thưởng vào số dư), Cài đặt (tên hiển thị, đổi mật khẩu).
 
 ## Chạy thử nhanh (chế độ demo, không cần New API)
 
@@ -53,7 +56,7 @@ content/docs/*.md        Tài liệu (Markdown, có front matter title/order/gro
 content/legal/*.md       Điều khoản, bảo mật, hoàn tiền (bản nháp, cần luật sư xem)
 src/app/(site)/          Trang công khai
 src/app/(auth)/          Đăng nhập, đăng ký, server action
-src/app/dashboard/       Bảng điều khiển
+src/app/console/         Console (cần đăng nhập)
 src/lib/newapi.ts        Client New API (phía server)
 src/lib/payment.ts       Client dịch vụ nạp coin
 src/lib/mock.ts          Dữ liệu giả lập cho chế độ demo
@@ -72,3 +75,4 @@ src/data/model-meta.ts   Context, mô tả từng mô hình (New API không lưu
 - Biểu đồ tổng quan lấy từ `/api/data/self`, New API ghi dữ liệu này theo chu kỳ vài phút. Bảng lịch sử thì cập nhật ngay.
 - Tài khoản bật xác thực 2 bước chưa đăng nhập được qua website (dùng trang console của New API).
 - Giao diện mới có tiếng Việt.
+- Chưa có (New API v0.13 không hỗ trợ hoặc cần dữ liệu thật): gói thuê bao, đăng nhập GitHub/Google, biểu đồ uptime/độ trễ, bảng xếp hạng, đánh giá khách hàng, bảo hiểm request, tổ chức/nhóm.

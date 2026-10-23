@@ -21,7 +21,7 @@ macOS / Linux (thêm vào `~/.zshrc` hoặc `~/.bashrc` để dùng lâu dài):
 
 ```bash
 export ANTHROPIC_BASE_URL="{{API_BASE}}"
-export ANTHROPIC_AUTH_TOKEN="sk-..."   # API key tạo trong bảng điều khiển
+export ANTHROPIC_AUTH_TOKEN="sk-..."   # API key tạo trong Console
 export ANTHROPIC_MODEL="claude-sonnet-4-5"
 export ANTHROPIC_DEFAULT_HAIKU_MODEL="claude-haiku-4-5"
 ```
@@ -61,12 +61,12 @@ Gõ `/status` trong Claude Code để kiểm tra base URL đang dùng.
 
 - Claude Code gửi nhiều token ngữ cảnh mỗi lượt. Tạo **một key riêng cho Claude Code** và đặt hạn mức chi tiêu để không tiêu quá tay.
 - Dùng `claude-haiku-4-5` cho việc nhỏ, `claude-sonnet-4-5` cho việc chính.
-- Theo dõi chi phí từng request ở **Bảng điều khiển → Lịch sử sử dụng**.
+- Theo dõi chi phí từng request ở **Console → Lịch sử sử dụng**.
 
 ## Lỗi thường gặp
 
 | Lỗi | Cách xử lý |
 | --- | --- |
 | `401 Invalid API key` | Kiểm tra `ANTHROPIC_AUTH_TOKEN`, key có thể đã bị tắt hoặc xóa. |
-| `403 quota` | Số dư hoặc hạn mức của key đã hết, [nạp thêm]({{SITE_URL}}/dashboard/topup). |
+| `403 quota` | Số dư hoặc hạn mức của key đã hết, [nạp thêm]({{SITE_URL}}/console/topup). |
 | Claude Code vẫn đòi đăng nhập | Bạn đã đăng nhập tài khoản Anthropic trước đó. Chạy `claude logout` rồi mở lại. |

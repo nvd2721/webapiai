@@ -1,9 +1,10 @@
 import "server-only";
 import { getPricing } from "./newapi";
-import { MODEL_META, guessKind, guessVendor, type ModelKind } from "@/data/model-meta";
+import { MODEL_META, guessKind, guessVendor, type Modality, type ModelKind } from "@/data/model-meta";
 
 export type Model = {
   id: string;
+  name: string; // display name
   vendor: string;
   kind: ModelKind;
   perCall: boolean;
@@ -18,7 +19,21 @@ export type Model = {
   vision?: boolean;
   tools?: boolean;
   endpoints: string[];
+  inputs: Modality[];
+  released?: string;
+  free: boolean;
+  discountPct: number; // 0 when not discounted
 };
+
+// "claude-sonnet-4-5" -> "Claude Sonnet 4.5", "gpt-4o-mini" -> "GPT 4o Mini"
+function prettyName(id: string) {
+  const base = id.split("/").pop() || id;
+  return base
+    .replace(/(\d)-(\d)(?=$|-)/g, "$1.$2")
+    .split(/[-_]/)
+    .map((w) => (/^(gpt|glm|o\d)$/i.test(w) ? w.toUpperCase() : w.charAt(0).toUpperCase() + w.slice(1)))
+    .join(" ");
+}
 
 // New API ratio 1 = $0.002 per 1K tokens = $2 per 1M tokens.
 const USD_PER_RATIO = 2;
@@ -42,6 +57,7 @@ export async function getModels(): Promise<Model[]> {
       const input = perCall ? null : p.model_ratio * USD_PER_RATIO * groupRatio;
       return {
         id: p.model_name,
+        name: meta.name || prettyName(p.model_name),
         vendor: (p.vendor_id && vendors.get(p.vendor_id)) || guessVendor(p.model_name),
         kind: meta.kind || guessKind(p.model_name),
         perCall,
@@ -56,6 +72,11 @@ export async function getModels(): Promise<Model[]> {
         vision: meta.vision,
         tools: meta.tools,
         endpoints: p.supported_endpoint_types || [],
+        inputs: meta.inputs || (meta.vision ? ["text", "image"] : ["text"]),
+        released: meta.released,
+        free: perCall ? p.model_price === 0 : p.model_ratio === 0,
+        discountPct:
+          !perCall && meta.listInput && input != null && meta.listInput > input ? Math.round((1 - input / meta.listInput) * 100) : 0,
       };
     })
     .sort((a, b) => a.vendor.localeCompare(b.vendor) || a.id.localeCompare(b.id));

@@ -21,7 +21,7 @@ Mức nạp tối đa mỗi lần là 4.000 USD, số dư tối đa mỗi tài k
 
 ## Các bước
 
-1. Vào **Bảng điều khiển → Nạp tiền**, nhập số USD và chọn đồng coin.
+1. Vào **Console → Nạp tiền**, nhập số USD và chọn đồng coin.
 2. Bấm **Tạo hóa đơn**. Bạn được chuyển tới trang thanh toán có **địa chỉ ví** và **mã QR**.
 3. Chuyển **đúng số coin, đúng mạng** ghi trên hóa đơn, từ ví cá nhân hoặc từ sàn.
 4. Sau khi giao dịch được xác nhận trên blockchain, số dư được cộng tự động. Bạn theo dõi trạng thái ở mục **Lịch sử nạp**.

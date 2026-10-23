@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Brain, Eye, Wrench } from "lucide-react";
+import { ArrowLeft, ArrowLeftRight, Brain, Code2, Eye, MessageSquare, Wrench } from "lucide-react";
+import { ModelCard } from "@/components/model-browser";
 import { CodeTabs } from "@/components/code-tabs";
 import { CopyButton } from "@/components/copy-button";
-import { getModel } from "@/lib/models";
+import { getModels } from "@/lib/models";
 import { codeSamples } from "@/lib/snippets";
 import { formatNumber, formatPrice, formatUsd } from "@/lib/format";
 import { KIND_LABEL } from "@/data/model-meta";
@@ -14,7 +15,10 @@ type Props = { params: Promise<{ slug: string[] }> };
 
 async function load(params: Props["params"]) {
   const { slug } = await params;
-  return getModel(slug.map(decodeURIComponent).join("/"));
+  const id = slug.map(decodeURIComponent).join("/");
+  const all = await getModels();
+  const m = all.find((x) => x.id === id);
+  return m ? Object.assign(m, { related: all.filter((x) => x.id !== id && x.vendor === m.vendor).slice(0, 4) }) : undefined;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -55,14 +59,20 @@ export default async function ModelPage({ params }: Props) {
 
       <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="text-sm text-muted">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{m.name}</h1>
+            <span className="badge border-free/40 bg-free/10 text-free">Đang hoạt động</span>
+            {m.free && <span className="badge border-free/40 bg-free/10 text-free">Miễn phí</span>}
+            {m.discountPct > 0 && <span className="badge border-deal/40 bg-deal/10 text-deal">-{m.discountPct}%</span>}
+          </div>
+          <div className="mt-1 flex items-center gap-1 font-mono text-sm text-muted">
+            {m.id} <CopyButton value={m.id} />
+          </div>
+          <div className="mt-2 text-sm text-muted">
             {m.vendor} · {KIND_LABEL[m.kind]}
+            {m.released && ` · Phát hành ${m.released.split("-").reverse().join("/")}`}
           </div>
-          <div className="mt-1 flex items-center gap-2">
-            <h1 className="font-mono text-2xl font-semibold tracking-tight sm:text-3xl">{m.id}</h1>
-            <CopyButton value={m.id} />
-          </div>
-          {m.description && <p className="mt-3 max-w-2xl text-muted">{m.description}</p>}
+          {m.description && <p className="mt-3 max-w-2xl">{m.description}</p>}
           {caps.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {caps.map((c) => (
@@ -73,9 +83,21 @@ export default async function ModelPage({ params }: Props) {
             </div>
           )}
         </div>
-        <Link href="/dashboard/keys" className="btn-primary">
-          Lấy API key
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href={`/compare?m=${encodeURIComponent(m.id)}`} className="btn-secondary">
+            <ArrowLeftRight className="size-4" /> So sánh
+          </Link>
+          {m.kind === "chat" && (
+            <a href="#api" className="btn-secondary">
+              <Code2 className="size-4" /> Gọi API
+            </a>
+          )}
+          {m.kind === "chat" && (
+            <Link href={`/console/chat?model=${encodeURIComponent(m.id)}`} className="btn-primary">
+              <MessageSquare className="size-4" /> Chat
+            </Link>
+          )}
+        </div>
       </div>
 
       <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-5">
@@ -88,7 +110,7 @@ export default async function ModelPage({ params }: Props) {
       </div>
 
       {m.kind === "chat" && (
-        <section className="mt-12">
+        <section id="api" className="mt-12 scroll-mt-20">
           <h2 className="text-xl font-semibold">Cách gọi</h2>
           <p className="mt-2 text-sm text-muted">
             Base URL <code className="font-mono">{site.apiBase}/v1</code>, thay <code className="font-mono">sk-...</code> bằng API key của bạn.
@@ -108,6 +130,17 @@ export default async function ModelPage({ params }: Props) {
           </p>
         )}
       </section>
+
+      {m.related.length > 0 && (
+        <section className="mt-14">
+          <h2 className="text-xl font-semibold">Mô hình khác của {m.vendor}</h2>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {m.related.map((r) => (
+              <ModelCard key={r.id} m={r} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

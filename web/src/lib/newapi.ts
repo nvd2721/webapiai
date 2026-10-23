@@ -50,6 +50,8 @@ const MESSAGES: [RegExp, string][] = [
   [/verification code|验证码/i, "Mã xác minh email không đúng hoặc đã hết hạn."],
   [/turnstile/i, "Không qua được bước kiểm tra chống bot."],
   [/name.*too long|名称过长/i, "Tên key quá dài."],
+  [/原密码错误|original password/i, "Mật khẩu hiện tại không đúng."],
+  [/转移额度最小|minimum transfer/i, "Cần ít nhất 1 USD thưởng để chuyển vào số dư."],
 ];
 
 export function translateMessage(msg: string): string {
@@ -184,6 +186,26 @@ export async function logout(session: Session) {
 
 export function getSelf(session: Session) {
   return get<NewApiUser>("/api/user/self", { session });
+}
+
+/** Changing display name or password requires the current password. */
+export async function updateSelf(session: Session, input: { original_password: string; display_name?: string; password?: string }) {
+  await get<null>("/api/user/self", { method: "PUT", body: input, session });
+}
+
+/** Moves referral rewards into the spendable balance. New API's minimum is 1 USD of quota. */
+export async function transferAff(session: Session, quota: number) {
+  await get<null>("/api/user/aff_transfer", { method: "POST", body: { quota }, session });
+}
+
+/** Referral code; New API creates one on first call if the account has none. */
+export async function getAffCode(session: Session) {
+  return (await get<string>("/api/user/aff", { session })) || "";
+}
+
+/** Model ids this user's group may call. */
+export async function getUserModels(session: Session) {
+  return (await get<string[] | null>("/api/user/models", { session })) || [];
 }
 
 // ---------- API keys ----------

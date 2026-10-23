@@ -61,7 +61,7 @@ export async function createKeyAction(_: KeyResult, form: FormData): Promise<Key
     const key = created ? await revealTokenKey(s, created.id) : undefined;
     return { ok: true, key, name: d.name };
   });
-  revalidatePath("/dashboard/keys");
+  revalidatePath("/console/keys");
   return r;
 }
 
@@ -74,7 +74,7 @@ export async function toggleKeyAction(id: number, enable: boolean): Promise<KeyR
     await setTokenStatus(s, id, enable ? 1 : 2);
     return { ok: true };
   });
-  revalidatePath("/dashboard/keys");
+  revalidatePath("/console/keys");
   return r;
 }
 
@@ -83,6 +83,6 @@ export async function deleteKeyAction(id: number): Promise<KeyResult> {
     await deleteToken(s, id);
     return { ok: true };
   });
-  revalidatePath("/dashboard/keys");
+  revalidatePath("/console/keys");
   return r;
 }

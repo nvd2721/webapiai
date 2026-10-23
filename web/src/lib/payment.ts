@@ -98,7 +98,7 @@ export async function createInvoice(userId: number, amountUsd: number, coin: Coi
       created_at: new Date().toISOString(),
       credited_usd: amountUsd,
     };
-    inv.invoice_url = `${site.url}/dashboard/topup?invoice=${inv.id}`;
+    inv.invoice_url = `${site.url}/console/topup?invoice=${inv.id}`;
     demoInvoices.unshift(inv);
     mockAddCredit(userId, amountUsd);
     return inv;

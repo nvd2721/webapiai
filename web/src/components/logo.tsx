@@ -3,10 +3,11 @@ import { site } from "@/lib/site";
 
 export function Logo({ href = "/" }: { href?: string }) {
   return (
-    <Link href={href} className="flex items-center gap-2 font-semibold tracking-tight">
+    <Link href={href} className="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
       <span className="grid size-7 place-items-center rounded-lg bg-accent text-accent-fg">
-        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-          <path d="M4 12h4l3-7 2 14 3-7h4" />
+        <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+          <circle cx="12" cy="12" r="3.2" />
+          <path d="M12 3.5a8.5 8.5 0 0 1 8.5 8.5M12 20.5A8.5 8.5 0 0 1 3.5 12" />
         </svg>
       </span>
       <span>{site.name}</span>

@@ -18,6 +18,7 @@ export type NewApiUser = {
   aff_code: string;
   aff_count: number;
   aff_quota: number;
+  aff_history_quota?: number;
 };
 
 export type LoginUser = Pick<NewApiUser, "id" | "username" | "display_name" | "role" | "status" | "group">;

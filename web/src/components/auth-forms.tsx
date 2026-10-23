@@ -37,7 +37,7 @@ export function LoginForm({ next, expired }: { next?: string; expired?: boolean 
       </button>
       <p className="text-center text-sm text-muted">
         Chưa có tài khoản?{" "}
-        <Link href="/register" className="font-medium text-accent">
+        <Link href="/register" className="font-medium underline">
           Đăng ký
         </Link>
       </p>
@@ -97,11 +97,11 @@ export function RegisterForm({ aff }: { aff?: string }) {
         <input type="checkbox" name="terms" className="mt-0.5 accent-[var(--accent)]" required />
         <span>
           Tôi đồng ý với{" "}
-          <Link href="/terms" target="_blank" className="text-accent">
+          <Link href="/terms" target="_blank" className="font-medium underline">
             Điều khoản sử dụng
           </Link>{" "}
           và{" "}
-          <Link href="/privacy" target="_blank" className="text-accent">
+          <Link href="/privacy" target="_blank" className="font-medium underline">
             Chính sách bảo mật
           </Link>
           .
@@ -112,7 +112,7 @@ export function RegisterForm({ aff }: { aff?: string }) {
       </button>
       <p className="text-center text-sm text-muted">
         Đã có tài khoản?{" "}
-        <Link href="/login" className="font-medium text-accent">
+        <Link href="/login" className="font-medium underline">
           Đăng nhập
         </Link>
       </p>
