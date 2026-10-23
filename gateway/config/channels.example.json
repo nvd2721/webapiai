@@ -1,0 +1,67 @@
+{
+  "_readme": [
+    "Sao chép thành config/channels.json (đã nằm trong .gitignore) rồi điền key thật.",
+    "Mỗi phần tử = một kênh (một key nhà cung cấp gốc). Cùng một model ở nhiều kênh: New API chọn theo priority cao trước, cùng priority thì chia theo weight, kênh lỗi thì thử kênh khác.",
+    "type: 1 OpenAI, 14 Anthropic, 24 Gemini, 33 AWS Bedrock, 41 Vertex AI, 43 DeepSeek, 17 Ali (Qwen), 16 Zhipu (GLM), 25 Moonshot (Kimi), 20 OpenRouter, 3 Azure OpenAI.",
+    "group: nhóm khách được dùng kênh này, nhiều nhóm cách nhau bằng dấu phẩy (default,vip,reseller).",
+    "model_mapping (tùy chọn): đổi tên model khách gửi sang tên upstream, ví dụ {\"anthropic/claude-haiku-4-5\": \"claude-haiku-4-5\"}.",
+    "Chỉ dùng key chính chủ / đại lý được phép bán lại (xem mục rủi ro trong kế hoạch)."
+  ],
+  "channels": [
+    {
+      "name": "anthropic-main",
+      "type": 14,
+      "key": "sk-ant-REPLACE_ME",
+      "models": "claude-haiku-4-5,claude-sonnet-4-5",
+      "group": "default,vip,reseller",
+      "priority": 10,
+      "weight": 10,
+      "test_model": "claude-haiku-4-5",
+      "tag": "anthropic"
+    },
+    {
+      "name": "openai-main",
+      "type": 1,
+      "key": "sk-REPLACE_ME",
+      "models": "gpt-4o-mini,dall-e-3",
+      "group": "default,vip,reseller",
+      "priority": 10,
+      "weight": 10,
+      "test_model": "gpt-4o-mini",
+      "tag": "openai"
+    },
+    {
+      "name": "gemini-main",
+      "type": 24,
+      "key": "AIza-REPLACE_ME",
+      "models": "gemini-2.5-flash",
+      "group": "default,vip,reseller",
+      "priority": 10,
+      "weight": 10,
+      "test_model": "gemini-2.5-flash",
+      "tag": "google"
+    },
+    {
+      "name": "deepseek-main",
+      "type": 43,
+      "key": "sk-REPLACE_ME",
+      "models": "deepseek-chat",
+      "group": "default,vip,reseller",
+      "priority": 10,
+      "weight": 10,
+      "test_model": "deepseek-chat",
+      "tag": "deepseek"
+    },
+    {
+      "name": "qwen-main",
+      "type": 17,
+      "key": "sk-REPLACE_ME",
+      "models": "qwen-plus",
+      "group": "default,vip,reseller",
+      "priority": 10,
+      "weight": 10,
+      "test_model": "qwen-plus",
+      "tag": "alibaba"
+    }
+  ]
+}

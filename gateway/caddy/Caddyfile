@@ -1,0 +1,72 @@
+{
+	email {$ACME_EMAIL}
+	servers {
+		# Không cắt request dài (mô hình suy luận, upload ảnh lớn).
+		timeouts {
+			read_body 5m
+			read_header 30s
+			write 0
+			idle 5m
+		}
+	}
+}
+
+(common) {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		-Server
+	}
+	log {
+		output file /data/access.log {
+			roll_size 50mb
+			roll_keep 5
+		}
+	}
+}
+
+# API cho khách: OpenAI /v1/*, Anthropic /v1/messages, Gemini /v1beta/*.
+# Trên Cloudflare để chế độ "DNS only" (proxy Cloudflare cắt kết nối sau 100 giây → lỗi 524).
+{$API_DOMAIN} {
+	import common
+	# Trang gốc của api.* chuyển về website.
+	@root path /
+	redir @root https://{$WEB_DOMAIN} 302
+
+	reverse_proxy new-api:3000 {
+		# Đẩy từng đoạn stream về khách ngay, không gom bộ đệm.
+		flush_interval -1
+		transport http {
+			dial_timeout 10s
+			response_header_timeout 10m
+		}
+	}
+}
+
+# Bảng điều khiển New API (đăng nhập, tạo key, log, quản trị).
+{$CONSOLE_DOMAIN} {
+	import common
+	reverse_proxy new-api:3000 {
+		flush_interval -1
+	}
+}
+
+# Dịch vụ nạp tiền: chỉ mở webhook NOWPayments và healthz ra Internet.
+# /api/invoices* (website gọi qua mạng nội bộ) và /api/admin/* không public.
+{$PAY_DOMAIN} {
+	import common
+	@public path /webhooks/* /healthz
+	handle @public {
+		reverse_proxy payment:8080
+	}
+	handle {
+		respond 404
+	}
+}
+
+# Website Next.js khi chạy cùng VPS (bỏ qua nếu dùng Vercel).
+{$WEB_DOMAIN} {
+	import common
+	reverse_proxy web:3000
+}

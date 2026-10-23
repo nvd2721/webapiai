@@ -1,0 +1,30 @@
+{
+  "_readme": "Sao chép thành config/settings.json. Lệnh `newapi_admin.py options` ghi các giá trị này vào New API. SystemName, ServerAddress, TopUpLink, QuotaForNewUser được tự điền từ .env.",
+  "GroupRatio": {
+    "default": 1,
+    "vip": 0.9,
+    "reseller": 0.8
+  },
+  "UserUsableGroups": {
+    "default": "Mặc định"
+  },
+  "options": {
+    "RegisterEnabled": true,
+    "PasswordRegisterEnabled": true,
+    "PasswordLoginEnabled": true,
+    "EmailVerificationEnabled": false,
+    "TurnstileCheckEnabled": false,
+    "DisplayInCurrencyEnabled": true,
+    "DisplayTokenStatEnabled": true,
+    "LogConsumeEnabled": true,
+    "AutomaticDisableChannelEnabled": true,
+    "AutomaticEnableChannelEnabled": true,
+    "ChannelDisableThreshold": 10,
+    "RetryTimes": 3,
+    "QuotaRemindThreshold": 500000,
+    "PreConsumedQuota": 500,
+    "DrawingEnabled": false,
+    "SelfUseModeEnabled": false,
+    "DemoSiteEnabled": false
+  }
+}
