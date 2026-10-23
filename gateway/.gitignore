@@ -1,0 +1,10 @@
+.env
+.env.*
+!.env.example
+data/
+logs/
+config/channels.json
+config/settings.json
+config/pricing.csv
+*.sql.gz
+__pycache__/
