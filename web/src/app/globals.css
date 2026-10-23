@@ -1,0 +1,128 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+@plugin "@tailwindcss/typography";
+
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #f6f6f6;
+  --fg: #0a0a0a;
+  --muted: #6b6b70;
+  --border: #e7e7e9;
+  --card: #ffffff;
+  --accent: #0a0a0a;
+  --accent-fg: #ffffff;
+  --accent-soft: #f1f1f2;
+  --code-bg: #0d0d0f;
+  --free: #16a34a;
+  --deal: #d97706;
+  color-scheme: light;
+}
+
+.dark {
+  --bg: #0a0a0b;
+  --bg-soft: #131315;
+  --fg: #f5f5f6;
+  --muted: #9b9ba3;
+  --border: #26262b;
+  --card: #111113;
+  --accent: #f5f5f6;
+  --accent-fg: #0a0a0b;
+  --accent-soft: #1c1c1f;
+  --code-bg: #08080a;
+  --free: #4ade80;
+  --deal: #fbbf24;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-soft: var(--bg-soft);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-code: var(--code-bg);
+  --color-free: var(--free);
+  --color-deal: var(--deal);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+@utility container-x {
+  @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+}
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-accent text-accent-fg hover:opacity-90;
+}
+@utility btn-secondary {
+  @apply btn border border-border bg-card text-fg hover:bg-bg-soft;
+}
+@utility btn-ghost {
+  @apply btn text-muted hover:bg-bg-soft hover:text-fg;
+}
+@utility card {
+  @apply rounded-xl border border-border bg-card;
+}
+@utility input {
+  @apply w-full rounded-lg border border-border bg-bg px-3 py-2 text-sm outline-none placeholder:text-muted focus:border-accent focus:ring-2 focus:ring-accent/20;
+}
+@utility label {
+  @apply mb-1.5 block text-sm font-medium;
+}
+@utility badge {
+  @apply inline-flex items-center rounded-md border border-border px-1.5 py-0.5 text-xs font-medium text-muted;
+}
+@utility table-x {
+  @apply w-full text-left text-sm;
+  & th {
+    @apply border-b border-border px-3 py-2 text-xs font-medium tracking-wide text-muted uppercase;
+  }
+  & td {
+    @apply border-b border-border px-3 py-2.5 align-middle;
+  }
+  & tr:last-child td {
+    @apply border-b-0;
+  }
+}
+
+/* Markdown pages (docs, legal) */
+.prose-x {
+  @apply prose prose-zinc max-w-none dark:prose-invert prose-headings:scroll-mt-20 prose-headings:font-semibold prose-a:text-accent prose-code:before:content-none prose-code:after:content-none prose-code:rounded prose-code:bg-bg-soft prose-code:px-1 prose-code:py-0.5 prose-code:font-normal prose-table:text-sm;
+}
+.prose-x .code-block {
+  @apply relative my-5 overflow-hidden rounded-xl border border-white/10 bg-code;
+}
+.prose-x .code-block pre {
+  @apply m-0 overflow-x-auto bg-transparent p-4 text-[13px] leading-relaxed text-zinc-100;
+}
+.prose-x .code-block code {
+  @apply bg-transparent p-0 text-zinc-100;
+}
+.prose-x .code-lang {
+  @apply border-b border-white/10 px-4 py-1.5 font-mono text-xs text-zinc-400;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
